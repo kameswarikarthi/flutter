@@ -36,6 +36,28 @@ class MessageRepositoryImpl implements MessageRepository {
     }
   }
 
+  @override
+  Future<Response?> getMessageList() async {
+    var dio = Dio();
+    try {
+      final authRepository = AuthRepositoryImpl();
+      final token = await authRepository.fetchApiToken();
+      Response httpResponse =
+          await dio.post('${aPIBaseURL}${ApiConstants.listMessageAddApi}',
+              data: {'Type': 'Project'},
+              options: Options(
+                headers: <String, String>{
+                  'authorization': 'Bearer $token',
+                  'client_access': apiCompanyName
+                },
+              ));
+
+      return httpResponse;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> setApiToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('api_token', token);

@@ -5,4 +5,6 @@ import 'package:dio/dio.dart';
 abstract class MessageRepository {
   // API methods
   Future<Response?> getMessages();
+
+  Future<Response?> getMessageList();
 }

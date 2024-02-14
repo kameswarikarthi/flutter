@@ -8,3 +8,5 @@ sealed class MessageEvent extends Equatable {
 }
 
 final class OnMessageLoaded extends MessageEvent {}
+
+final class OnMessageTypeLoaded extends MessageEvent {}

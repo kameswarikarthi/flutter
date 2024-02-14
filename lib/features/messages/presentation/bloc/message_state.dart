@@ -21,3 +21,8 @@ final class MessageFailure extends MessageState {
 }
 
 final class MessageLoading extends MessageState {}
+
+final class MessageTypeSuccss extends MessageState {
+  final MessageListModel messageType;
+  const MessageTypeSuccss({required this.messageType});
+}
