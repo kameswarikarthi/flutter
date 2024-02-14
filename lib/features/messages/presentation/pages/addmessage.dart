@@ -41,11 +41,16 @@ class AddMessagePage extends StatelessWidget {
                 color: const Color.fromARGB(
                     255, 233, 230, 230), // Set background color to grey
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50), // Set border radius
+                  borderRadius: BorderRadius.circular(20), // Set border radius
                   child: AddMessageWidget(
                     MessageType: MessageType,
                     PriorityMessage: PriorityMessage,
                     ShowIn: ShowIn,
+                    onDateSelected: (DateTime? date) {
+                      // Handle the selected date here
+                      print('Selected date: $date');
+                    },
+                    selectedDate: DateTime.now(),
                   ),
                 ),
               );
