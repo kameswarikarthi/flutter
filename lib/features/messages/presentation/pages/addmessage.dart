@@ -46,11 +46,6 @@ class AddMessagePage extends StatelessWidget {
                     MessageType: MessageType,
                     PriorityMessage: PriorityMessage,
                     ShowIn: ShowIn,
-                    onDateSelected: (DateTime? date) {
-                      // Handle the selected date here
-                      print('Selected date: $date');
-                    },
-                    selectedDate: DateTime.now(),
                   ),
                 ),
               );

@@ -1,38 +1,71 @@
 import 'package:flutter/material.dart';
 import '../../data/models/message_list.dart';
-//import 'package:flutter_quill/flutter_quill.dart' as quill;
+
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:message_app/config/theme/quil_editor.dart';
+
 import 'package:intl/intl.dart';
 import 'package:message_app/features/messages/presentation/widgets/column.dart';
 import 'package:message_app/features/messages/presentation/widgets/styled_text.dart';
 import 'package:message_app/core/constants/constants.dart';
 import 'package:message_app/features/messages/presentation/widgets/button.dart';
 
-class AddMessageWidget extends StatelessWidget {
+class AddMessageWidget extends StatefulWidget {
   final List<MessageTypeData>? MessageType;
   final List<PriorityMessageData>? PriorityMessage;
   final List<ShowInDatas>? ShowIn;
-  final Function(DateTime?) onDateSelected; // Callback function
-  final DateTime? selectedDate;
 
   const AddMessageWidget({
     Key? key,
     required this.MessageType,
     required this.PriorityMessage,
     required this.ShowIn,
-    required this.onDateSelected, // Callback function for date selection
-    required this.selectedDate, // Selected date passed from the parent widget
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    // final quill.QuillController _controller = quill.QuillController.basic();
+  _AddMessageWidgetState createState() => _AddMessageWidgetState();
+}
 
+class _AddMessageWidgetState extends State<AddMessageWidget> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final quill.QuillController _controller = quill.QuillController.basic();
+  final TextEditingController _publishDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
+  DateTime? selectedPublishDate;
+  DateTime? selectedEndDate;
+
+  @override
+  void dispose() {
+    _publishDateController.dispose();
+    _endDateController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context,
+      TextEditingController controller, DateTime? selectedDate) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      // Update the selected date and the text field value
+      setState(() {
+        selectedDate = pickedDate;
+        controller.text =
+            "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}";
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Message'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
@@ -41,7 +74,7 @@ class AddMessageWidget extends StatelessWidget {
             children: [
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'ShowIn'),
-                items: ShowIn!
+                items: widget.ShowIn!
                     .map((showInData) => DropdownMenuItem<String>(
                           value: showInData.showInName,
                           child: Text(showInData.showInName.toString()),
@@ -60,7 +93,7 @@ class AddMessageWidget extends StatelessWidget {
               SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Type'),
-                items: MessageType!
+                items: widget.MessageType!
                     .map((messageTypeData) => DropdownMenuItem<String>(
                           value: messageTypeData.messageTypeName,
                           child:
@@ -80,7 +113,7 @@ class AddMessageWidget extends StatelessWidget {
               SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Message Priority'),
-                items: PriorityMessage!
+                items: widget.PriorityMessage!
                     .map((priorityMessageData) => DropdownMenuItem<String>(
                           value: priorityMessageData.priorityMessageName,
                           child: Text(priorityMessageData.priorityMessageName
@@ -98,17 +131,11 @@ class AddMessageWidget extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
-              // quill.QuillEditor(
-              //   controller: _controller,
-              //   scrollController: ScrollController(),
-              //   padding: EdgeInsets.zero,
-              //   scrollable: true,
-              //   expands: false,
-              //   focusNode: FocusNode(),
-              //   autoFocus: false,
-              //   readOnly: false,
-              //   placeholder: 'Enter your message...',
-              // ),
+              QuilEditor(
+                withLabel: true,
+                label: "Notification",
+                editorController: quill.QuillController.basic(),
+              ),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -119,14 +146,42 @@ class AddMessageWidget extends StatelessWidget {
                         labelText: 'Publish Date',
                         suffixIcon: IconButton(
                           icon: Icon(Icons.calendar_today),
-                          onPressed: () => _selectDate(context),
+                          onPressed: () => _selectDate(context,
+                              _publishDateController, selectedPublishDate),
                         ),
                       ),
-                      controller: TextEditingController(
-                        text: selectedDate != null
-                            ? "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}"
-                            : '',
+                      controller: _publishDateController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select Publish Date';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: 'End Date',
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.calendar_today),
+                          onPressed: () => _selectDate(
+                              context, _endDateController, selectedEndDate),
+                        ),
                       ),
+                      controller: _endDateController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select End Date';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
@@ -148,16 +203,5 @@ class AddMessageWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    onDateSelected(
-        pickedDate); // Update the selected date using the callback function
   }
 }
