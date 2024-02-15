@@ -73,21 +73,10 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'ShowIn'),
-                items: widget.ShowIn!
-                    .map((showInData) => DropdownMenuItem<String>(
-                          value: showInData.showInName,
-                          child: Text(showInData.showInName.toString()),
-                        ))
-                    .toList(),
+                decoration: InputDecoration(labelText: 'Project'),
+                items: const [],
                 onChanged: (value) {
                   // Handle project dropdown value change
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select ShowIn';
-                  }
-                  return null;
                 },
               ),
               SizedBox(height: 20),
@@ -112,31 +101,13 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
               ),
               SizedBox(height: 20),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Message Priority'),
-                items: widget.PriorityMessage!
-                    .map((priorityMessageData) => DropdownMenuItem<String>(
-                          value: priorityMessageData.priorityMessageName,
-                          child: Text(priorityMessageData.priorityMessageName
-                              .toString()),
-                        ))
-                    .toList(),
+                decoration: InputDecoration(labelText: 'Participant Type'),
+                items: const [],
                 onChanged: (value) {
-                  // Handle participant type dropdown value change
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select Message Priority';
-                  }
-                  return null;
+                  // Handle project dropdown value change
                 },
               ),
-              const SizedBox(height: 20),
-              QuilEditor(
-                withLabel: true,
-                label: "Notification",
-                editorController: quill.QuillController.basic(),
-              ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
@@ -187,6 +158,59 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
                 ],
               ),
               SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(labelText: 'ShowIn'),
+                items: widget.ShowIn!
+                    .map((showInData) => DropdownMenuItem<String>(
+                          value: showInData.showInName,
+                          child: Text(showInData.showInName.toString()),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  // Handle project dropdown value change
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select ShowIn';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(labelText: 'Product'),
+                items: const [],
+                onChanged: (value) {
+                  // Handle project dropdown value change
+                },
+              ),
+              SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(labelText: 'Message Priority'),
+                items: widget.PriorityMessage!
+                    .map((priorityMessageData) => DropdownMenuItem<String>(
+                          value: priorityMessageData.priorityMessageName,
+                          child: Text(priorityMessageData.priorityMessageName
+                              .toString()),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  // Handle participant type dropdown value change
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select Message Priority';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              QuilEditor(
+                withLabel: true,
+                label: "Notification",
+                editorController: quill.QuillController.basic(),
+              ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -196,7 +220,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
                     );
                   }
                 },
-                child: Text('Save'),
+                child: const Text('Save'),
               ),
             ],
           ),
